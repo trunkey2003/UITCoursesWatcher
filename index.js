@@ -1,4 +1,5 @@
 import axios from "axios";
+import https from "https";
 import sound from "sound-play";
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";
@@ -12,32 +13,25 @@ const errorAlertPath = join(__dirname, "error.mp3");
 
 import clipboardy from "clipboardy";
 
-const coursesWantToRegister = ["CE201.O21.MTCL"];
+const coursesWantToRegister = ["EC337.P12.TMCL"];
 
 const accessToken =
-  "eyJhbGsiOisIazI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MDQzNzY2MjcsInN1YiI6IjIxNTIxMDQ5In0.-4UOo-uMDEH9YnOCYjdAmSF3SQgIeERuUKWYUcm6-wI";
+  "";
 let currentRegisterCourse = [];
+
+const instance = axios.create({
+  httpsAgent: new https.Agent({
+    rejectUnauthorized: false
+  })
+});
 
 setInterval(async () => {
   try {
-    const { data } = await axios.get("https://dkhpapi.uit.edu.vn/courses", {
+    const { data } = await instance.get("https://dkhpapi.uit.edu.vn/courses", {
       headers: {
         accept: "application/json, text/plain, */*",
-        "accept-language":
-          "vi-VN,vi;q=0.9,en-GB;q=0.8,en;q=0.7,fr-FR;q=0.6,fr;q=0.5,en-US;q=0.4",
         authorization: `Bearer ${accessToken}`,
-        "sec-ch-ua":
-          '"Chromium";v="116", "Not)A;Brand";v="24", "Google Chrome";v="116"',
-        "sec-ch-ua-mobile": "?0",
-        "sec-ch-ua-platform": '"Windows"',
-        "sec-fetch-dest": "empty",
-        "sec-fetch-mode": "cors",
-        "sec-fetch-site": "same-site",
-        Referer: "https://dkhp.uit.edu.vn/",
-        "Referrer-Policy": "strict-origin-when-cross-origin",
-      },
-      body: null,
-      method: "GET",
+      }
     });
     const courses = data.courses || [];
     const availableCourse = [];
